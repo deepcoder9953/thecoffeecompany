@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Coffee Company</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --cream:#FAF6F0;--espresso:#1A0F00;--brown-deep:#2C1200;
+    --brown-mid:#6B3A1F;--gold:#C8943A;--gold-light:#E8B96A;
+    --sand:#D4B896;--white:#FFFDF9;--muted:#7A6050;
+  }
+  html{scroll-behavior:smooth;}
+  body{font-family:'Jost',sans-serif;background:var(--espresso);color:var(--cream);overflow-x:hidden;}
+
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 5%;background:rgba(26,15,0,0.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(200,148,58,0.2);}
+  .logo{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:var(--gold);letter-spacing:.04em;}
+  .nav-links{display:flex;gap:2.2rem;list-style:none;}
+  .nav-links a{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--sand);text-decoration:none;transition:color .3s;}
+  .nav-links a:hover{color:var(--gold);}
+  .nav-cta{background:var(--gold);color:var(--espresso);padding:.55rem 1.3rem;font-family:'Jost',sans-serif;font-size:.74rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;transition:all .3s;}
+  .nav-cta:hover{background:var(--gold-light);transform:translateY(-1px);}
+  .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none;}
+  .hamburger span{display:block;width:22px;height:2px;background:var(--sand);transition:all .3s;}
+  .mob-menu{display:none;position:fixed;top:60px;left:0;right:0;background:rgba(20,10,0,0.98);backdrop-filter:blur(20px);padding:1.5rem 5%;border-bottom:1px solid rgba(200,148,58,0.2);z-index:99;}
+  .mob-menu.open{display:block;}
+  .mob-menu a{display:block;font-size:.9rem;letter-spacing:.12em;text-transform:uppercase;color:var(--sand);text-decoration:none;padding:.9rem 0;border-bottom:1px solid rgba(200,148,58,0.1);transition:color .3s;}
+  .mob-menu a:last-child{border:none;color:var(--gold);margin-top:.5rem;}
+  .mob-menu a:hover{color:var(--gold);}
+
+  /* BUTTONS */
+  .btn-primary{background:var(--gold);color:var(--espresso);padding:.9rem 2.2rem;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;display:inline-block;transition:all .3s;}
+  .btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);}
+  .btn-outline{border:1px solid rgba(200,148,58,0.55);color:var(--gold);padding:.9rem 2.2rem;background:transparent;cursor:pointer;font-family:'Jost',sans-serif;font-size:.82rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;display:inline-block;transition:all .3s;}
+  .btn-outline:hover{background:rgba(200,148,58,0.1);border-color:var(--gold);}
+
+  /* HERO */
+  .hero{min-height:100vh;position:relative;display:flex;align-items:center;overflow:hidden;}
+  .hero-bg{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1800&q=85');background-size:cover;background-position:center;filter:brightness(.35);transform:scale(1.04);animation:hzoom 14s ease-out forwards;}
+  @keyframes hzoom{from{transform:scale(1.04);}to{transform:scale(1.0);}}
+  .hero-ov{position:absolute;inset:0;background:linear-gradient(120deg,rgba(26,15,0,.75) 0%,rgba(26,15,0,.15) 100%);}
+  .hero-content{position:relative;z-index:2;padding:8rem 5% 5rem;max-width:740px;}
+  .hero-badge{display:inline-flex;align-items:center;gap:.5rem;border:1px solid rgba(200,148,58,.5);padding:.4rem 1rem;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1.8rem;animation:fup .8s ease both;}
+  .hero-badge span{width:6px;height:6px;background:var(--gold);border-radius:50%;}
+  .hero-title{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,6vw,5.8rem);font-weight:900;line-height:1.0;color:var(--white);animation:fup .8s .15s ease both;}
+  .hero-title em{font-style:italic;color:var(--gold);display:block;}
+  .hero-sub{margin-top:1.6rem;font-size:1rem;font-weight:300;line-height:1.85;color:rgba(212,184,150,.9);max-width:480px;animation:fup .8s .3s ease both;}
+  .hero-actions{display:flex;gap:1rem;margin-top:2.5rem;flex-wrap:wrap;animation:fup .8s .45s ease both;}
+  .hero-stats{display:flex;gap:2.5rem;margin-top:3.5rem;flex-wrap:wrap;animation:fup .8s .6s ease both;padding-top:2rem;border-top:1px solid rgba(200,148,58,.2);}
+  .hnum{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:var(--gold);}
+  .hlbl{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--sand);margin-top:.1rem;}
+  @keyframes fup{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+  /* DIVIDER */
+  .divider{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 5%;}
+
+  /* SECTION LABELS */
+  .slabel{font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.9rem;}
+  .stitle{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,3.5vw,3rem);font-weight:700;line-height:1.2;color:var(--white);margin-bottom:1.4rem;}
+  .stitle em{font-style:italic;color:var(--gold);}
+
+  /* ABOUT */
+  .about{padding:6rem 5%;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;}
+  .about-text{font-size:.96rem;line-height:1.9;color:var(--sand);margin-bottom:1rem;}
+  .feats{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-top:2.2rem;}
+  .feat{display:flex;align-items:flex-start;gap:.8rem;padding:1rem;border:1px solid rgba(200,148,58,.15);transition:all .3s;}
+  .feat:hover{border-color:rgba(200,148,58,.4);background:rgba(200,148,58,.04);}
+  .fi{font-size:1.2rem;flex-shrink:0;margin-top:.1rem;}
+  .ft{font-size:.8rem;font-weight:600;color:var(--cream);margin-bottom:.2rem;}
+  .fd{font-size:.73rem;color:var(--muted);line-height:1.5;}
+  .img-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:220px 220px;gap:10px;}
+  .igc{overflow:hidden;position:relative;}
+  .igc.tall{grid-row:span 2;}
+  .igc img{width:100%;height:100%;object-fit:cover;transition:transform .6s;display:block;}
+  .igc:hover img{transform:scale(1.06);}
+  .igl{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(26,15,0,.85));padding:1.5rem .9rem .7rem;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--sand);}
+
+  /* MENU */
+  .menu{padding:6rem 5%;background:var(--brown-deep);}
+  .mhead{text-align:center;margin-bottom:3.5rem;}
+  .mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.4rem;}
+  .mc{background:var(--espresso);border:1px solid rgba(200,148,58,.12);overflow:hidden;transition:all .4s;position:relative;cursor:default;}
+  .mc:hover{transform:translateY(-5px);border-color:rgba(200,148,58,.35);}
+  .mc-img{height:180px;overflow:hidden;position:relative;}
+  .mc-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s;display:block;}
+  .mc:hover .mc-img img{transform:scale(1.08);}
+  .mc-body{padding:1.4rem;}
+  .mtag{position:absolute;top:.8rem;right:.8rem;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;background:rgba(200,148,58,.92);color:var(--espresso);padding:.2rem .6rem;font-weight:700;}
+  .mname{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--white);margin-bottom:.4rem;}
+  .mdesc{font-size:.77rem;color:var(--muted);line-height:1.6;margin-bottom:1rem;}
+  .mprice{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold);font-weight:700;}
+
+  /* STATS */
+  .experience{padding:6rem 5%;}
+  .expgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:3.5rem;}
+  .expc{background:var(--brown-deep);padding:2.5rem 2rem;text-align:center;position:relative;overflow:hidden;transition:background .3s;border:1px solid rgba(200,148,58,.08);}
+  .expc:hover{background:var(--brown-mid);}
+  .expc-bg{position:absolute;inset:0;opacity:.07;background-size:cover;background-position:center;transition:opacity .3s;}
+  .expc:hover .expc-bg{opacity:.16;}
+  .exnum{font-family:'Playfair Display',serif;font-size:3.2rem;font-weight:900;color:var(--gold);line-height:1;position:relative;}
+  .exlbl{font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;color:var(--sand);margin-top:.5rem;position:relative;}
+  .exdesc{font-size:.8rem;color:var(--muted);margin-top:.7rem;line-height:1.6;position:relative;}
+
+  /* REVIEWS */
+  .reviews{padding:6rem 5%;background:var(--brown-deep);}
+  .rhead{text-align:center;margin-bottom:1.5rem;}
+  .gbadge{display:inline-flex;align-items:center;gap:.6rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);padding:.5rem 1.2rem;margin-bottom:2.5rem;font-size:.78rem;color:var(--sand);}
+  .gword{font-weight:700;font-size:1rem;}
+  .gg{color:#4285F4;}.go1{color:#EA4335;}.go2{color:#FBBC04;}.gg2{color:#4285F4;}.gl{color:#34A853;}.ge{color:#EA4335;}
+  .orating{display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:.5rem;}
+  .brating{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:var(--gold);}
+  .stars{color:#FBBC04;font-size:1.4rem;letter-spacing:.1em;}
+  .rcount{font-size:.78rem;color:var(--muted);}
+  .rgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.4rem;margin-top:3rem;}
+  .rc{background:var(--espresso);padding:1.8rem;border:1px solid rgba(200,148,58,.12);transition:border-color .3s;}
+  .rc:hover{border-color:rgba(200,148,58,.3);}
+  .rrow{display:flex;align-items:center;gap:1rem;margin-bottom:1rem;}
+  .ravatar{width:42px;height:42px;border-radius:50%;background:var(--brown-mid);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;color:var(--gold);font-size:.9rem;flex-shrink:0;}
+  .rname{font-size:.87rem;font-weight:600;color:var(--cream);}
+  .rdate{font-size:.7rem;color:var(--muted);margin-top:.1rem;}
+  .rstars{color:#FBBC04;font-size:.85rem;}
+  .rtext{font-size:.81rem;line-height:1.78;color:var(--sand);font-style:italic;}
+  .rcta{text-align:center;margin-top:2.5rem;}
+  .grbtn{display:inline-flex;align-items:center;gap:.6rem;border:1px solid rgba(200,148,58,.35);color:var(--gold);padding:.8rem 1.8rem;background:transparent;cursor:pointer;font-family:'Jost',sans-serif;font-size:.78rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:all .3s;}
+  .grbtn:hover{background:rgba(200,148,58,.08);}
+
+  /* GALLERY */
+  .gallery{padding:6rem 5%;}
+  .ggrid{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:220px 220px;gap:10px;margin-top:3rem;}
+  .gi{overflow:hidden;position:relative;cursor:pointer;}
+  .gi.wide{grid-column:span 2;}
+  .gi img{width:100%;height:100%;object-fit:cover;transition:transform .55s;display:block;}
+  .gi:hover img{transform:scale(1.07);}
+  .gov{position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(26,15,0,.82));opacity:0;transition:opacity .35s;display:flex;align-items:flex-end;padding:1rem 1.2rem;}
+  .gi:hover .gov{opacity:1;}
+  .gov span{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);}
+
+  /* LOYALTY */
+  .loyalty{margin:4rem 5%;position:relative;overflow:hidden;}
+  .lbg{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1400&q=85');background-size:cover;background-position:center;filter:brightness(.25);}
+  .lin{position:relative;z-index:2;padding:3.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;border:1px solid rgba(200,148,58,.3);}
+  .ltag{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem;}
+  .ltitle{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;color:var(--white);}
+  .lsub{font-size:.84rem;color:var(--sand);margin-top:.5rem;max-width:450px;line-height:1.7;}
+
+  /* CONTACT */
+  .contact{padding:6rem 5%;background:var(--brown-deep);}
+  .cin{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;}
+  .cdet{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.8rem;}
+  .cicon{width:42px;height:42px;background:rgba(200,148,58,.1);border:1px solid rgba(200,148,58,.25);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+  .clbl{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:.25rem;}
+  .cval{font-size:.93rem;color:var(--cream);font-weight:500;}
+  .cval a{color:var(--cream);text-decoration:none;transition:color .2s;}
+  .cval a:hover{color:var(--gold);}
+  .hgrid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-top:.5rem;}
+  .hi{font-size:.77rem;color:var(--muted);}
+  .hi strong{color:var(--sand);}
+  .ftitle{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--white);margin-bottom:.5rem;}
+  .fsub{font-size:.82rem;color:var(--muted);margin-bottom:2rem;line-height:1.6;}
+  .frow{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  .fg{margin-bottom:1.2rem;}
+  .fg label{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--sand);display:block;margin-bottom:.5rem;}
+  .fg input,.fg textarea,.fg select{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(200,148,58,.2);color:var(--cream);font-family:'Jost',sans-serif;font-size:.87rem;padding:.8rem 1rem;outline:none;transition:border-color .3s;}
+  .fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--gold);}
+  .fg select option{background:var(--brown-deep);}
+  .fg textarea{resize:vertical;min-height:110px;}
+  .sbtn{width:100%;background:var(--gold);color:var(--espresso);border:none;padding:1rem;cursor:pointer;font-family:'Jost',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;transition:all .3s;margin-top:.5rem;}
+  .sbtn:hover{background:var(--gold-light);transform:translateY(-2px);}
+  .fsuccess{display:none;text-align:center;padding:2rem;border:1px solid rgba(200,148,58,.3);margin-top:1rem;}
+  .fsuccess.show{display:block;}
+  .slink{width:36px;height:36px;border:1px solid rgba(200,148,58,.2);display:flex;align-items:center;justify-content:center;font-size:.9rem;text-decoration:none;color:var(--muted);transition:all .3s;}
+  .slink:hover{border-color:var(--gold);color:var(--gold);}
+
+  /* MAP */
+  .mapsec{padding:0 5% 6rem;}
+  .mapbox{width:100%;height:300px;position:relative;overflow:hidden;border:1px solid rgba(200,148,58,.15);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;}
+  .mapbox img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.28) sepia(.3);display:block;}
+  .mapbox>*{position:relative;z-index:2;}
+
+  /* FOOTER */
+  footer{background:var(--espresso);border-top:1px solid rgba(200,148,58,.15);padding:3rem 5% 2rem;}
+  .fgrid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:2rem;}
+  .fbrand .logo{font-size:1.5rem;display:block;margin-bottom:1rem;}
+  .fbrand p{font-size:.81rem;color:var(--muted);line-height:1.8;max-width:240px;}
+  .fcol h4{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:1.1rem;}
+  .fcol ul{list-style:none;}
+  .fcol ul li{margin-bottom:.55rem;}
+  .fcol ul li a{font-size:.8rem;color:var(--muted);text-decoration:none;transition:color .2s;}
+  .fcol ul li a:hover{color:var(--cream);}
+  .fbot{border-top:1px solid rgba(200,148,58,.1);padding-top:1.5rem;display:flex;align-items:center;justify-content:space-between;font-size:.73rem;color:var(--muted);flex-wrap:wrap;gap:1rem;}
+  .slinks{display:flex;gap:.8rem;}
+
+  /* REVEAL */
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+
+  /* RESPONSIVE */
+  @media(max-width:900px){
+    .nav-links,.nav-cta{display:none;}
+    .hamburger{display:flex;}
+    .hero-content{padding-top:6rem;max-width:100%;}
+    .hero-stats{gap:1.5rem;}
+    .about{grid-template-columns:1fr;gap:3rem;}
+    .img-grid{grid-template-rows:200px 200px;}
+    .expgrid{grid-template-columns:1fr 1fr;}
+    .cin{grid-template-columns:1fr;gap:3rem;}
+    .fgrid{grid-template-columns:1fr 1fr;gap:2rem;}
+    .ggrid{grid-template-columns:1fr 1fr;grid-template-rows:auto;}
+    .gi,.gi.wide{height:200px;}
+    .lin{flex-direction:column;}
+  }
+  @media(max-width:600px){
+    .hero-title{font-size:2.4rem;}
+    .hero-stats{gap:1rem;}
+    .hnum{font-size:1.4rem;}
+    .expgrid{grid-template-columns:1fr;}
+    .frow{grid-template-columns:1fr;}
+    .fgrid{grid-template-columns:1fr;}
+    .ggrid{grid-template-columns:1fr 1fr;grid-template-rows:160px 160px 160px;}
+    .gi.wide{grid-column:span 2;}
+    .gi{height:160px;}
+    .img-grid{grid-template-columns:1fr;grid-template-rows:auto;}
+    .igc.tall,.igc{height:200px;}
+    .fbot{flex-direction:column;text-align:center;}
+    .mc-img{height:160px;}
+    .feats{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="logo">The Coffee Company</span>
+  <ul class="nav-links">
+    <li><a href="#about">Our Story</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Reserve a Table</a>
+  <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mob-menu" id="mobMenu">
+  <a href="#about" onclick="closeMenu()">Our Story</a>
+  <a href="#menu" onclick="closeMenu()">Menu</a>
+  <a href="#reviews" onclick="closeMenu()">Reviews</a>
+  <a href="#contact" onclick="closeMenu()">Contact</a>
+  <a href="#contact" onclick="closeMenu()">Reserve a Table →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-ov"></div>
+  <div class="hero-content">
+    <div class="hero-badge"><span></span> Since 2015 · Premium Coffee House</div>
+    <h1 class="hero-title">Where Every Cup<em>Tells a Story</em></h1>
+    <p class="hero-sub">Handcrafted brews, warm ambiance, and the finest beans sourced from across the globe. Welcome to The Coffee Company — your perfect escape.</p>
+    <div class="hero-actions">
+      <a href="#menu" class="btn-primary">Explore Our Menu</a>
+      <a href="#contact" class="btn-outline">Visit Us Today</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hnum">4.9★</div><div class="hlbl">Google Rating</div></div>
+      <div><div class="hnum">500+</div><div class="hlbl">Happy Customers</div></div>
+      <div><div class="hnum">30+</div><div class="hlbl">Brew Varieties</div></div>
+      <div><div class="hnum">9+</div><div class="hlbl">Years of Craft</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="reveal">
+    <div class="slabel">Our Philosophy</div>
+    <h2 class="stitle">More Than Coffee,<br>It's an <em>Experience</em></h2>
+    <p class="about-text">At The Coffee Company, we believe that a great cup of coffee is the beginning of a great day. From the moment you step in, the aroma, warmth, and craftsmanship speak for themselves.</p>
+    <p class="about-text">We source our beans directly from sustainable farms in Colombia, Ethiopia, and Coorg — roasted in small batches to preserve every nuance of flavour.</p>
+    <div class="feats">
+      <div class="feat"><span class="fi">🌱</span><div><div class="ft">Ethically Sourced</div><div class="fd">Direct trade from sustainable farms worldwide</div></div></div>
+      <div class="feat"><span class="fi">🏆</span><div><div class="ft">Award Winning</div><div class="fd">Recognised for excellence in brewing craft</div></div></div>
+      <div class="feat"><span class="fi">👨‍🍳</span><div><div class="ft">Expert Baristas</div><div class="fd">Trained professionals with a passion for coffee</div></div></div>
+      <div class="feat"><span class="fi">🌡️</span><div><div class="ft">Perfect Temperature</div><div class="fd">Precision brewing at every single step</div></div></div>
+    </div>
+  </div>
+  <div class="reveal">
+    <div class="img-grid">
+      <div class="igc tall">
+        <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=700&q=88" alt="Artisan espresso" loading="lazy">
+        <div class="igl">Artisan Espresso</div>
+      </div>
+      <div class="igc">
+        <img src="https://images.unsplash.com/photo-1611854779393-1b2da9d400fe?w=600&q=88" alt="Coffee beans" loading="lazy">
+        <div class="igl">Origin Beans</div>
+      </div>
+      <div class="igc">
+        <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=88" alt="Fresh pastries" loading="lazy">
+        <div class="igl">House Bakes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MENU -->
+<section class="menu" id="menu">
+  <div class="mhead reveal">
+    <div class="slabel">Our Offerings</div>
+    <h2 class="stitle">Crafted with <em>Passion</em></h2>
+  </div>
+  <div class="mgrid">
+    <div class="mc reveal">
+      <div class="mc-img"><img src="https://images.unsplash.com/photo-1541167760496-1628856ab772?w=700&q=88" alt="Espresso" loading="lazy"><span class="mtag">Signature</span></div>
+      <div class="mc-body"><div class="mname">Classic Espresso</div><div class="mdesc">Pure, concentrated coffee shot — rich, bold, intensely flavoured from our house blend.</div><div class="mprice">₹120</div></div>
+    </div>
+    <div class="mc reveal">
+      <div class="mc-img"><img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=700&q=88" alt="Cappuccino" loading="lazy"><span class="mtag">Bestseller</span></div>
+      <div class="mc-body"><div class="mname">Creamy Cappuccino</div><div class="mdesc">Velvety steamed milk meets bold espresso, crowned with silky microfoam latte art.</div><div class="mprice">₹180</div></div>
+    </div>
+    <div class="mc reveal">
+      <div class="mc-img"><img src="https://images.unsplash.com/photo-1606791405792-1004f1718d0c?w=700&q=88" alt="Turmeric Latte" loading="lazy"><span class="mtag">New</span></div>
+      <div class="mc-body"><div class="mname">Golden Turmeric Latte</div><div class="mdesc">Warm turmeric, cinnamon, ginger, and oat milk — nourishing and absolutely delicious.</div><div class="mprice">₹220</div></div>
+    </div>
+    <div class="mc reveal">
+      <div class="mc-img"><img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=700&q=88" alt="Cold Brew" loading="lazy"></div>
+      <div class="mc-body"><div class="mname">Cold Brew</div><div class="mdesc">Steeped 18 hours in cold water for a smooth, naturally sweet, zero-bitterness experience.</div><div class="mprice">₹200</div></div>
+    </div>
+    <div class="mc reveal">
+      <div class="mc-img"><img src="https://images.unsplash.com/photo-1534778101976-62847782c213?w=700&q=88" alt="Mocha" loading="lazy"></div>
+      <div class="mc-body"><div class="mname">Mocha Delight</div><div class="mdesc">Rich dark chocolate syrup swirled through espresso and steamed milk — pure indulgence.</div><div class="mprice">₹210</div></div>
+    </div>
+    <div class="mc reveal">
+      <div class="mc-img"><img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=700&q=88" alt="Croissant" loading="lazy"></div>
+      <div class="mc-body"><div class="mname">Butter Croissant</div><div class="mdesc">Flaky, golden layers of buttery pastry baked fresh every morning. The perfect companion.</div><div class="mprice">₹160</div></div>
+    </div>
+    <div class="mc reveal">
+      <div class="mc-img"><img src="https://plus.unsplash.com/premium_photo-1675788938970-e2716f23b1f9?q=88&w=700&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Tiramisu" loading="lazy"></div>
+      <div class="mc-body"><div class="mname">Tiramisu Slice</div><div class="mdesc">Classic Italian dessert with espresso-soaked ladyfingers and velvety mascarpone cream.</div><div class="mprice">₹280</div></div>
+    </div>
+    <div class="mc reveal">
+      <div class="mc-img"><img src="https://plus.unsplash.com/premium_photo-1720070416636-0e5ef67d3862?q=88&w=700&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Rose Latte" loading="lazy"><span class="mtag">Seasonal</span></div>
+      <div class="mc-body"><div class="mname">Rose Cardamom Latte</div><div class="mdesc">Exotic floral notes with warm cardamom spice — a fragrant journey in every sip.</div><div class="mprice">₹240</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="experience" id="experience">
+  <div class="mhead reveal">
+    <div class="slabel">By the Numbers</div>
+    <h2 class="stitle">A Legacy of <em>Excellence</em></h2>
+  </div>
+  <div class="expgrid">
+    <div class="expc reveal"><div class="expc-bg" style="background-image:url('https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=500&q=80')"></div><div class="exnum">9+</div><div class="exlbl">Years of Craft</div><div class="exdesc">Brewing exceptional coffee since 2015 with unwavering passion.</div></div>
+    <div class="expc reveal"><div class="expc-bg" style="background-image:url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=500&q=80')"></div><div class="exnum">30+</div><div class="exlbl">Brew Varieties</div><div class="exdesc">From classic espressos to exotic specialty drinks.</div></div>
+    <div class="expc reveal"><div class="expc-bg" style="background-image:url('https://images.unsplash.com/photo-1521302080334-4bebac2763a6?w=500&q=80')"></div><div class="exnum">4.9★</div><div class="exlbl">Google Rating</div><div class="exdesc">Consistently loved and rated by our valued guests.</div></div>
+    <div class="expc reveal"><div class="expc-bg" style="background-image:url('https://images.unsplash.com/photo-1453614512568-c4024d13c247?w=500&q=80')"></div><div class="exnum">500+</div><div class="exlbl">Cups Daily</div><div class="exdesc">Served with care and craftsmanship every single day.</div></div>
+    <div class="expc reveal"><div class="expc-bg" style="background-image:url('https://images.unsplash.com/photo-1611854779393-1b2da9d400fe?w=500&q=80')"></div><div class="exnum">3</div><div class="exlbl">Origin Countries</div><div class="exdesc">Colombia, Ethiopia, and Coorg — the world's finest beans.</div></div>
+    <div class="expc reveal"><div class="expc-bg" style="background-image:url('https://images.unsplash.com/photo-1511920170033-f8396924c348?w=500&q=80')"></div><div class="exnum">100%</div><div class="exlbl">Satisfaction</div><div class="exdesc">Your happiness is our only measure of success.</div></div>
+  </div>
+</section>
+
+<!-- LOYALTY -->
+<div class="loyalty reveal">
+  <div class="lbg"></div>
+  <div class="lin">
+    <div>
+      <div class="ltag">☆ Member Exclusive</div>
+      <div class="ltitle">Join Our Loyalty Programme</div>
+      <div class="lsub">Earn points on every purchase. Get your 10th coffee free. Enjoy member-only happy hours, early access to new blends, and birthday surprises.</div>
+    </div>
+    <div style="flex-shrink:0;"><a href="#contact" class="btn-primary">Join Now — It's Free</a></div>
+  </div>
+</div>
+
+<!-- REVIEWS -->
+<section class="reviews" id="reviews">
+  <div class="rhead reveal">
+    <div class="slabel">Customer Love</div>
+    <h2 class="stitle">What Our Guests <em>Say</em></h2>
+    <div style="text-align:center;margin-top:1.5rem;">
+      <div class="gbadge"><span class="gword"><span class="gg">G</span><span class="go1">o</span><span class="go2">o</span><span class="gg2">g</span><span class="gl">l</span><span class="ge">e</span></span> Verified Reviews</div>
+      <div class="orating"><div class="brating">4.9</div><div><div class="stars">★★★★★</div><div class="rcount">Based on 340+ Google Reviews</div></div></div>
+    </div>
+  </div>
+  <div class="rgrid">
+    <div class="rc reveal"><div class="rrow"><div class="ravatar">AK</div><div><div class="rname">Arjun Kapoor</div><div class="rdate">2 weeks ago</div><div class="rstars">★★★★★</div></div></div><div class="rtext">"Hands down the best cappuccino I've had in the city. The ambiance is warm and cozy, staff incredibly friendly, and the food is top notch. This is my new regular spot!"</div></div>
+    <div class="rc reveal"><div class="rrow"><div class="ravatar">PS</div><div><div class="rname">Priya Sharma</div><div class="rdate">1 month ago</div><div class="rstars">★★★★★</div></div></div><div class="rtext">"I tried the Rose Cardamom Latte and oh my goodness — absolutely magical! The Coffee Company really knows how to create unique experiences. Highly recommend!"</div></div>
+    <div class="rc reveal"><div class="rrow"><div class="ravatar">RV</div><div><div class="rname">Rahul Verma</div><div class="rdate">3 weeks ago</div><div class="rstars">★★★★★</div></div></div><div class="rtext">"The cold brew here is extraordinary — no bitterness, just smooth rich flavour. Came in for work one morning and ended up staying four hours. Absolutely love the vibe!"</div></div>
+    <div class="rc reveal"><div class="rrow"><div class="ravatar">MG</div><div><div class="rname">Meera Gupta</div><div class="rdate">1 week ago</div><div class="rstars">★★★★★</div></div></div><div class="rtext">"Perfect for a date or business meeting. Tiramisu is sinfully good, coffee always consistently excellent. The baristas even made latte art with my name — such a sweet touch!"</div></div>
+    <div class="rc reveal"><div class="rrow"><div class="ravatar">SK</div><div><div class="rname">Sanjay Kumar</div><div class="rdate">5 days ago</div><div class="rstars">★★★★★</div></div></div><div class="rtext">"Visited for the first time last weekend. The Golden Turmeric Latte is an absolute game-changer — creamy, warming, beautifully balanced. Will definitely be returning soon!"</div></div>
+    <div class="rc reveal"><div class="rrow"><div class="ravatar">ND</div><div><div class="rname">Neha Dixit</div><div class="rdate">2 months ago</div><div class="rstars">★★★★★</div></div></div><div class="rtext">"The Coffee Company is everything a coffee shop should be. Excellent quality, lovely interiors, great music, and staff who genuinely care. Their loyalty programme is a great bonus!"</div></div>
+  </div>
+  <div class="rcta reveal">
+    <a href="https://www.google.com/search?q=The+Coffee+Company" target="_blank" class="grbtn">★ Leave a Google Review</a>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery" id="gallery">
+  <div class="mhead reveal">
+    <div class="slabel">Gallery</div>
+    <h2 class="stitle">Life at <em>The Coffee Company</em></h2>
+  </div>
+  <div class="ggrid">
+    <div class="gi wide reveal"><img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1100&q=88" alt="Coffee shop interior" loading="lazy"><div class="gov"><span>Our Space</span></div></div>
+    <div class="gi reveal"><img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=88" alt="Latte art" loading="lazy"><div class="gov"><span>Latte Art</span></div></div>
+    <div class="gi reveal"><img src="https://images.unsplash.com/photo-1611854779393-1b2da9d400fe?w=600&q=88" alt="Coffee beans" loading="lazy"><div class="gov"><span>Origin Beans</span></div></div>
+    <div class="gi reveal"><img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&q=88" alt="Cafe" loading="lazy"><div class="gov"><span>The Vibe</span></div></div>
+    <div class="gi reveal"><img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=88" alt="Pastries" loading="lazy"><div class="gov"><span>Fresh Bakes</span></div></div>
+    <div class="gi wide reveal"><img src="https://images.unsplash.com/photo-1521302080334-4bebac2763a6?w=1100&q=88" alt="Barista at work" loading="lazy"><div class="gov"><span>Our Craft</span></div></div>
+  </div>
+</section>
+
+<!-- INSTAGRAM STRIP -->
+<section style="padding:4rem 5%;background:var(--espresso);">
+  <div class="mhead reveal" style="text-align:center;margin-bottom:2rem;">
+    <div class="slabel">📸 @TheCoffeeCompany</div>
+    <h2 class="stitle" style="font-size:1.6rem;">Follow Our <em>Journey</em></h2>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;border-radius:2px;overflow:hidden;" class="reveal">
+    <div style="overflow:hidden;aspect-ratio:1;position:relative;cursor:pointer;">
+      <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=85" alt="Coffee" style="width:100%;height:100%;object-fit:cover;transition:transform .5s;display:block;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+    </div>
+    <div style="overflow:hidden;aspect-ratio:1;position:relative;cursor:pointer;">
+      <img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&q=85" alt="Cappuccino" style="width:100%;height:100%;object-fit:cover;transition:transform .5s;display:block;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+    </div>
+    <div style="overflow:hidden;aspect-ratio:1;position:relative;cursor:pointer;">
+      <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&q=85" alt="Pastry" style="width:100%;height:100%;object-fit:cover;transition:transform .5s;display:block;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+    </div>
+    <div style="overflow:hidden;aspect-ratio:1;position:relative;cursor:pointer;">
+      <img src="https://images.unsplash.com/photo-1521302080334-4bebac2763a6?w=400&q=85" alt="Barista" style="width:100%;height:100%;object-fit:cover;transition:transform .5s;display:block;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+    </div>
+    <div style="overflow:hidden;aspect-ratio:1;position:relative;cursor:pointer;">
+      <img src="https://images.unsplash.com/photo-1611854779393-1b2da9d400fe?w=400&q=85" alt="Beans" style="width:100%;height:100%;object-fit:cover;transition:transform .5s;display:block;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+    </div>
+    <div style="overflow:hidden;aspect-ratio:1;position:relative;cursor:pointer;">
+      <img src="https://images.unsplash.com/photo-1534778101976-62847782c213?w=400&q=85" alt="Mocha" style="width:100%;height:100%;object-fit:cover;transition:transform .5s;display:block;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:1.8rem;" class="reveal">
+    <a href="https://instagram.com" target="_blank" class="btn-outline" style="font-size:.74rem;padding:.65rem 1.6rem;">Follow on Instagram →</a>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="mhead reveal" style="text-align:center;margin-bottom:4rem;">
+    <div class="slabel">Get In Touch</div>
+    <h2 class="stitle">We'd Love to <em>Hear from You</em></h2>
+  </div>
+  <div class="cin">
+    <div class="reveal">
+      <div class="cdet"><div class="cicon">📞</div><div><div class="clbl">Phone</div><div class="cval"><a href="tel:9646263326">+91 96462 63326</a></div></div></div>
+      <div class="cdet"><div class="cicon">📍</div><div><div class="clbl">Location</div><div class="cval">The Coffee Company, Main Street,<br>Your City, India</div></div></div>
+      <div class="cdet"><div class="cicon">✉️</div><div><div class="clbl">Email</div><div class="cval"><a href="mailto:hello@thecoffeecompany.in">hello@thecoffeecompany.in</a></div></div></div>
+      <div class="cdet"><div class="cicon">🕐</div><div><div class="clbl">Opening Hours</div><div class="hgrid"><div class="hi"><strong>Mon – Fri</strong><br>7:00 AM – 10:00 PM</div><div class="hi"><strong>Sat – Sun</strong><br>8:00 AM – 11:00 PM</div></div></div></div>
+      <div style="margin-top:2rem;padding:1.5rem;border:1px solid rgba(200,148,58,.2);background:rgba(200,148,58,.04);">
+        <div style="font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.8rem;">Follow Us</div>
+        <div style="display:flex;gap:.8rem;flex-wrap:wrap;">
+          <a href="#" class="slink">📸</a><a href="#" class="slink">📘</a><a href="#" class="slink">🐦</a><a href="#" class="slink">▶️</a>
+        </div>
+        <div style="margin-top:1rem;font-size:.77rem;color:var(--muted);">Tag us <strong style="color:var(--sand);">@TheCoffeeCompany</strong> in your posts to get featured!</div>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="ftitle">Send Us a Message</div>
+      <div class="fsub">Whether it's a reservation, feedback, event booking, or just to say hello — we're always happy to hear from you.</div>
+      <div class="frow">
+        <div class="fg"><label>First Name</label><input type="text" id="fname" placeholder="Your first name"></div>
+        <div class="fg"><label>Last Name</label><input type="text" id="lname" placeholder="Your last name"></div>
+      </div>
+      <div class="fg"><label>Phone Number</label><input type="tel" id="phone" placeholder="+91 00000 00000"></div>
+      <div class="fg"><label>Email Address</label><input type="email" id="email" placeholder="your@email.com"></div>
+      <div class="fg"><label>I'm reaching out about</label>
+        <select id="subject">
+          <option value="">Select a topic</option>
+          <option>Table Reservation</option><option>Private Event / Party</option>
+          <option>Feedback or Suggestion</option><option>Loyalty Programme</option>
+          <option>Catering / Bulk Orders</option><option>General Enquiry</option>
+        </select>
+      </div>
+      <div class="fg"><label>Message</label><textarea id="message" placeholder="Tell us more — we love hearing from you..."></textarea></div>
+      <button class="sbtn" onclick="handleSubmit()">Send Message →</button>
+      <div class="fsuccess" id="fsuccess">
+        <div style="font-size:2rem;margin-bottom:.8rem;">☕</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--gold);margin-bottom:.5rem;">Thank you!</div>
+        <div style="font-size:.84rem;color:var(--sand);">We've received your message and will be in touch within 24 hours. Come visit us for a warm cup!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAP -->
+<div class="mapsec">
+  <div class="mapbox reveal">
+    <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1400&q=80" alt="City" loading="lazy">
+    <div style="font-size:2.5rem;">📍</div>
+    <div style="font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--gold);">The Coffee Company</div>
+    <div style="font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);">Main Street · Your City · India</div>
+    <div style="margin-top:1rem;"><a href="https://maps.google.com" target="_blank" class="btn-outline" style="font-size:.74rem;padding:.6rem 1.4rem;">Open in Google Maps →</a></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fgrid">
+    <div class="fbrand">
+      <span class="logo">The Coffee Company</span>
+      <p>Where every cup is crafted with passion, precision, and purpose. Your neighbourhood's finest coffee experience since 2015.</p>
+    </div>
+    <div class="fcol"><h4>Quick Links</h4><ul><li><a href="#about">Our Story</a></li><li><a href="#menu">Menu</a></li><li><a href="#gallery">Gallery</a></li><li><a href="#reviews">Reviews</a></li><li><a href="#contact">Contact</a></li></ul></div>
+    <div class="fcol"><h4>Services</h4><ul><li><a href="#">Table Reservations</a></li><li><a href="#">Private Events</a></li><li><a href="#">Catering</a></li><li><a href="#">Gift Cards</a></li><li><a href="#">Loyalty Club</a></li></ul></div>
+    <div class="fcol"><h4>Contact</h4><ul><li><a href="tel:9646263326">+91 96462 63326</a></li><li><a href="mailto:hello@thecoffeecompany.in">hello@thecoffeecompany.in</a></li><li><a href="#">Google Maps</a></li></ul></div>
+  </div>
+  <div class="fbot">
+    <span>© 2025 The Coffee Company. All rights reserved.</span>
+    <div class="slinks"><a href="#" class="slink">📸</a><a href="#" class="slink">📘</a><a href="#" class="slink">🐦</a></div>
+  </div>
+</footer>
+
+<script>
+  function toggleMenu(){document.getElementById('mobMenu').classList.toggle('open');}
+  function closeMenu(){document.getElementById('mobMenu').classList.remove('open');}
+
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('visible'),i*70);});
+  },{threshold:0.08,rootMargin:'0px 0px -30px 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+  function handleSubmit(){
+    const f=document.getElementById('fname').value.trim();
+    const em=document.getElementById('email').value.trim();
+    if(!f||!em){alert('Please fill in at least your name and email.');return;}
+    document.getElementById('fsuccess').classList.add('show');
+    document.querySelector('.sbtn').style.display='none';
+    ['fname','lname','phone','email','subject','message'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  }
+
+  const secs=document.querySelectorAll('section[id]');
+  window.addEventListener('scroll',()=>{
+    const sy=window.pageYOffset;
+    secs.forEach(s=>{
+      const sH=s.offsetHeight,sT=s.offsetTop-130,id=s.getAttribute('id');
+      const nl=document.querySelector(`.nav-links a[href="#${id}"]`);
+      if(nl)nl.style.color=(sy>sT&&sy<=sT+sH)?'var(--gold)':'';
+    });
+  });
+</script>
+</body>
+</html>
